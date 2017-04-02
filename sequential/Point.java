@@ -65,4 +65,14 @@ public class Point {
 		this.x = x;
 		this.y = y;
 	}
+
+	/*---------------------------------------------------
+	 * @Override toString()
+	 *---------------------------------------------------
+	 * Returns a string version of the Point.
+	 *---------------------------------------------------*/
+	@Override
+	public String toString() {
+		return "(" + x + ", " + y + ")";
+	}
 }
