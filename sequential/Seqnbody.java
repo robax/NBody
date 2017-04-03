@@ -1,3 +1,5 @@
+package sequential;
+
 /*---------------------------------------------------
  * Tanner Bernth
  * Robert Walters
@@ -17,18 +19,26 @@ public class Seqnbody {
  	 * Main
  	 *---------------------------------------------------*/
 	public static void main (String[] args) {
-		if (args.length < 4)
-			error("java <# workers> <# bodies> <size body> <# time steps>");
+		if (args.length < 4){
+			// default settings so i dont have to type as much
+			//error("java <# workers> <# bodies> <size body> <# time steps>");
+			workers = 1;
+			n = 100;
+			size = 10;
+			numSteps = 10000;
+			dt = 1;	
+		}
+		else{
+			// Helpful in case you forget the input
+			System.out.println("java <# workers> <# bodies> <size body> <# time steps>");
 
-		// Helpful in case you forget the input
-		System.out.println("java <# workers> <# bodies> <size body> <# time steps>");
-
-		workers = Integer.valueOf(args[0]);
-		n = Integer.valueOf(args[1]);
-		size = Integer.valueOf(args[2]);
-		numSteps = Integer.valueOf(args[3]);
-		dt = 1;
-
+			workers = Integer.valueOf(args[0]);
+			n = Integer.valueOf(args[1]);
+			size = Integer.valueOf(args[2]);
+			numSteps = Integer.valueOf(args[3]);
+			dt = 1;
+		}
+		
 		p = new Point[n];
 		v = new Point[n];
 		f = new Point[n];
@@ -43,7 +53,7 @@ public class Seqnbody {
 			moveBodies();
 			gui.update(p);
 			// Sleep if you want to see the current parameters more slowly
-			//try {Thread.sleep(500);}catch(InterruptedException e){}
+			try {Thread.sleep(100);}catch(InterruptedException e){}
 		}
 	}
 

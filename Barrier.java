@@ -3,10 +3,9 @@
 // Program 2
 
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Barrier {
-	AtomicInteger count = new AtomicInteger(0);
+	int count = 0;
 	int numProc;
 	Semaphore mutex;
 	Semaphore[] barrier;
@@ -31,16 +30,28 @@ public class Barrier {
 		boolean flag = false;
 		
 		// increment count, indicating that we have reached the barrier
-		count.incrementAndGet();
+		try {
+			mutex.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		count++;
+		mutex.release();
 		
 		// the last thread to reach the barrier will wake up the next process,
 		// which begins the cascade that permits all the processes to move
 		// beyond the barrier
-		if(count.intValue()==numProc){
+		try {
+			mutex.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		if(count==numProc){
 			barrier[(me+1)%numProc].release();
-			count.set(0);;
+			count = 0;
 			flag = true;
 		}
+		mutex.release();
 		
 		try {
 			barrier[me].acquire();

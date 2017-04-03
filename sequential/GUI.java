@@ -1,3 +1,5 @@
+package sequential;
+
 /*---------------------------------------------------
  * Tanner Bernth
  * Robert Walters

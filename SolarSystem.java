@@ -1,10 +1,10 @@
 
-public class System {
+public class SolarSystem {
 	Planet[] system;
 	PlanetThread[] threads;
 	Barrier barrier;
 	
-	public System(int planetCount, int threadCount){
+	public SolarSystem(int planetCount, int threadCount){
 		system = initPlanets(planetCount);
 		barrier = new Barrier(threadCount);
 		threads = initThreads(threadCount, barrier);
