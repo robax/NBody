@@ -8,6 +8,7 @@
 
 import javax.swing.JFrame;
 
+@SuppressWarnings("serial")
 public class GUI extends JFrame {
 
 	public static final int width = 600;
@@ -23,8 +24,9 @@ public class GUI extends JFrame {
 	public GUI(String title, Point[] p, int size) {
 		this.title = title;
 		this.p = p;
+		this.size = size;
 		initializeFrame();
-		view = new GraphicView(p, size);
+		view = new GraphicView(this.p, this.size);
 		this.add(view);
 	}
 

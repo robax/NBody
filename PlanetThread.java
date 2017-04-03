@@ -15,6 +15,7 @@ public class PlanetThread implements Runnable{
 	// exclusive
 	private static int chunkEnd;
 	
+	@SuppressWarnings("static-access")
 	public PlanetThread(int numThreads, int me, Barrier barrier, Point[] p, Point[] v, 
 						Point[] f, double[] m, int n, int dt, GUI gui, int numSteps){
 		runner = new Thread(this);
@@ -94,7 +95,7 @@ public class PlanetThread implements Runnable{
 	public static void moveBodies() {
 		Point deltav, // dv = f/m * DT
 			  deltap; // dp = (v + dv/2) * DT
-		for (int i = 1; i < n; i++) {
+		for (int i = 0; i < n; i++) {
 			deltav = new Point(f[i].getX()/m[i]*dt,f[i].getY()/m[i]*dt);
 			deltap = new Point((v[i].getX()+deltav.getX()/2)*dt,
 							   (v[i].getY()+deltav.getY()/2)*dt);

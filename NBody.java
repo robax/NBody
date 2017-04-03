@@ -70,9 +70,14 @@ public class NBody {
 			bar.sync(workers);
 			gui.update(p);
 			// Sleep if you want to see the current parameters more slowly
-			try {Thread.sleep(100);}catch(InterruptedException e){}
+			try {Thread.sleep(300);}catch(InterruptedException e){}
 			iteration++;
 		}
+		
+		for(PlanetThread thread : threads){
+			thread.join();
+		}
+		
 	}
 
 	/*---------------------------------------------------
@@ -98,6 +103,7 @@ public class NBody {
 	
 		PlanetThread[] out = new PlanetThread[workers];
 		for(int i=0; i<workers; i++){
+			// lol look at this constructor
 			out[i] = new PlanetThread(workers, i, bar, p, v, f, m, n, dt, gui, numSteps);
 		}
 		return out;

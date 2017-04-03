@@ -20,15 +20,4 @@ public class Planet {
 		
 	}
 	
-	public void calculateForces(){
-		double distance, magnitude;
-		Point direction;
-		
-		//for(int i=0; i<){
-		//	for(int j
-		distance = Math.sqrt( Math.pow(sys[i].p.x - sys[j].p.x) +
-							  Math.pow(sys[i].p.y - sys[j].p.y));
-		magnitude = (G * sys[i].m.x)
-	}
-	
 }
