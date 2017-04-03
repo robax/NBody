@@ -48,10 +48,13 @@ public class NBody {
 		v = new Point[n];
 		f = new Point[n];
 		m = new double[n];
-		initPVFM();
+
 		bar = new Barrier(workers+1);
 		GUI gui = new GUI("NBody Problem", p, size);
 		gui.setVisible(true);
+
+		initPVFM();
+		gui.update(p);
 		
 		threads = initThreads();
 
@@ -91,11 +94,18 @@ public class NBody {
 	 * results.
 	 *---------------------------------------------------*/
 	public static void initPVFM() {
+		int vxneg, vyneg, fxneg, fyneg;
 		for (int i = 0; i < n; i++) {
-			p[i] = new Point((Math.random()*20)+size,(Math.random()*20)+size);
-			v[i] = new Point(i,i);
-			f[i] = new Point(69,i*2);
-			m[i] = i;
+			vxneg = (int)(Math.random()*2);
+			vyneg = (int)(Math.random()*2);
+			fxneg = (int)(Math.random()*2);
+			fyneg = (int)(Math.random()*2);
+			p[i] = new Point((Math.random()*1200),(Math.random()*600));
+			v[i] = new Point(vxneg == 1 ? Math.random()*-10 : Math.random()*10,
+							 vyneg == 1 ? Math.random()*-10 : Math.random()*10);
+			f[i] = new Point(fxneg == 1 ? Math.random()*-10 : Math.random()*10,
+							 fyneg == 1 ? Math.random()*-10 : Math.random()*10);
+			m[i] = Math.random()*100000;
 		}
 	}
 	

@@ -43,10 +43,12 @@ public class Seqnbody {
 		v = new Point[n];
 		f = new Point[n];
 		m = new double[n];
-		initPVFM();
 
 		GUI gui = new GUI("NBody Problem", p, size);
 		gui.setVisible(true);
+
+		initPVFM();
+		gui.update(p);
 
 		for (int time = 0; time < numSteps*dt; time++) {
 			calculateForces();
@@ -68,11 +70,18 @@ public class Seqnbody {
 	 * results.
 	 *---------------------------------------------------*/
 	public static void initPVFM() {
+		int vxneg, vyneg, fxneg, fyneg;
 		for (int i = 0; i < n; i++) {
-			p[i] = new Point((Math.random()*20)+size,(Math.random()*20)+size);
-			v[i] = new Point(i,i);
-			f[i] = new Point(69,i*2);
-			m[i] = i;
+			vxneg = (int)(Math.random()*2);
+			vyneg = (int)(Math.random()*2);
+			fxneg = (int)(Math.random()*2);
+			fyneg = (int)(Math.random()*2);
+			p[i] = new Point((Math.random()*1200),(Math.random()*600));
+			v[i] = new Point(vxneg == 1 ? Math.random()*-10 : Math.random()*10,
+							 vyneg == 1 ? Math.random()*-10 : Math.random()*10);
+			f[i] = new Point(fxneg == 1 ? Math.random()*-10 : Math.random()*10,
+							 fyneg == 1 ? Math.random()*-10 : Math.random()*10);
+			m[i] = Math.random()*100000;
 		}
 	}
 
@@ -91,9 +100,9 @@ public class Seqnbody {
 				magnitude = (g*m[i]*m[j]) / Math.pow(distance,2);
 				direction = new Point(p[j].getX()-p[i].getX(), p[j].getY()-p[i].getY());
 				f[i].setX(f[i].getX()+magnitude*direction.getX()/distance);
-				f[j].setX(f[j].getX()+magnitude*direction.getX()/distance);
+				f[j].setX(f[j].getX()-magnitude*direction.getX()/distance);
 				f[i].setY(f[i].getY()+magnitude*direction.getY()/distance);
-				f[j].setY(f[j].getY()+magnitude*direction.getY()/distance);
+				f[j].setY(f[j].getY()-magnitude*direction.getY()/distance);
 			}
 		}
 	}
@@ -113,7 +122,7 @@ public class Seqnbody {
 			v[i].setX(v[i].getX()+deltav.getX());
 			v[i].setY(v[i].getY()+deltav.getY());
 			p[i].setX(p[i].getX()+deltap.getX());
-			p[i].setY(v[i].getY()+deltap.getY());
+			p[i].setY(p[i].getY()+deltap.getY());
 			f[i].move(0.0,0.0); // reset force vector
 		}
 	}

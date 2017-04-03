@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
 
-	public static final int width = 600;
+	public static final int width = 1200;
 	public static final int height = 600;
 	private GraphicView view;
 	private String title;

@@ -49,7 +49,7 @@ public class GraphicView extends JPanel {
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(Color.BLACK);
 		for (Point point : p) {
-			g2.fillOval(((int)point.getX()/100)+300, (int)point.getY()+300, size, size);
+			g2.fillOval((int)point.getX(), (int)point.getY(), size, size);
 		}
 	}
 }
