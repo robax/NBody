@@ -51,7 +51,7 @@ public class PlanetThread extends Thread{
 	 *---------------------------------------------------*/
 	public void run() {
 		for (int time = 0; time < numSteps*dt; time++) {
-			System.out.println("Thread " + me + " at time " + time);
+			//System.out.println("Thread " + me + " at time " + time);
 			calculateForces();
 			barrier.sync(me);
 			moveBodies();
@@ -90,6 +90,7 @@ public class PlanetThread extends Thread{
 		Point deltav, // dv = f/m * DT
 			  deltap; // dp = (v + dv/2) * DT
 		Point force = new Point(0.0,0.0);
+		// TODO: Rob: this loop is incorrect, threads are doing redundant work
 		for (int i = me; i < planets.length; i++) {
 			// sum the forces on body i and reset f[*,i]
 			for (int k = 1; k < planets.length; k++) {

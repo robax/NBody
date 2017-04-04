@@ -46,8 +46,9 @@ public class GraphicView extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
-		g2.setColor(Color.BLACK);
+		setBackground(Color.BLACK);
 		for (Planet planet : planets) {
+			g2.setColor(planet.color);
 			g2.fillOval((int)planet.p.getX(), (int)planet.p.getY(), size, size);
 		}
 	}

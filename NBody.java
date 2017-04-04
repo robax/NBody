@@ -46,14 +46,14 @@ public class NBody {
 		
 		// This thread is in charge of the gui, while worker threads do the math
 		for (int time = 0; time < numSteps*dt; time++) {
-			System.out.println("Thread main at time " + time);
+			//System.out.println("Thread main at time " + time);
 			// wait for workers to calc forces
 			bar.sync(numThreads);
 			// wait for workers to move bodies
 			bar.sync(numThreads);
 			gui.update();
 			// Sleep if you want to see the current parameters more slowly
-			try {Thread.sleep(300);}catch(InterruptedException e){}
+			try {Thread.sleep(600);}catch(InterruptedException e){}
 		}
 	
 		// join threads
@@ -81,6 +81,7 @@ public class NBody {
 		Planet[] out = new Planet[n];
 		int vxneg, vyneg, fxneg, fyneg;
 		for (int i = 0; i < n; i++) {
+			// TODO: Rob: all of this should be moved to the planet constructor
 			vxneg = (int)(Math.random()*2);
 			vyneg = (int)(Math.random()*2);
 			fxneg = (int)(Math.random()*2);
