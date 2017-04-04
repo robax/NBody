@@ -16,17 +16,15 @@ public class GUI extends JFrame {
 	private GraphicView view;
 	private String title;
 	private Planet[] planets;
-	private int size;
 
 	/*---------------------------------------------------
 	 * Constructor
 	 *---------------------------------------------------*/
-	public GUI(String title, Planet[] planets, int size) {
+	public GUI(String title, Planet[] planets) {
 		this.title = title;
 		this.planets = planets;
-		this.size = size;
 		initializeFrame();
-		view = new GraphicView(this.planets, this.size);
+		view = new GraphicView(this.planets);
 		this.add(view);
 	}
 

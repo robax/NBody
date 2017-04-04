@@ -1,7 +1,7 @@
 /*---------------------------------------------------
  * Tanner Bernth
  * Robert Walters
- * Seqnbody.java
+ * NBody.java
  *---------------------------------------------------
  * Parallel version of the n-body problem.
  *---------------------------------------------------*/
@@ -35,7 +35,7 @@ public class NBody {
 		// Initialize the bodies, threads, and gui
 		Planet[] planets = initPlanets(numPlanets);
 		Barrier bar = new Barrier(numThreads+1);
-		GUI gui = new GUI("NBody Problem", planets, size);
+		GUI gui = new GUI("NBody Problem", planets);
 		gui.setVisible(true);
 		PlanetThread[] threads = initThreads(numThreads, bar, dt, numSteps, planets);
 

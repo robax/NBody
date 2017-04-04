@@ -32,7 +32,7 @@ public class PlanetThread extends Thread{
 		chunkEnd = chunkSize * (me+1);
 		
 		// this check is necessary to avoid off-by-remainder errors
-		if(me==numThreads-1){
+		if(me==numThreads){
 			chunkEnd = planets.length;
 		}
 		System.out.println("Thread " + me + " assigned chunk " + chunkStart + "-" + chunkEnd);

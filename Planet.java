@@ -18,6 +18,7 @@ public class Planet {
 	
 	public Point p, f, v;
 	public double m;
+	public int radius;
 	public Color color;
 	
 	/*---------------------------------------------------
@@ -29,8 +30,14 @@ public class Planet {
 		this.v = v;
 		this.m = m;
 		this.color = colors[randInt(0, colors.length-1)];
+		this.radius = randInt(0, 20);
 	}
 	
+	/*---------------------------------------------------
+	 * int randInt(int min, int max)
+	 *---------------------------------------------------
+	 * Because the constructor depends on random numbers!
+	 *---------------------------------------------------*/
 	private static int randInt(int min, int max) {
 	    Random rand = new Random();
 	    int randomNum = rand.nextInt((max - min) + 1) + min;

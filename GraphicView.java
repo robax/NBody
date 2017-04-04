@@ -16,15 +16,13 @@ import javax.swing.JPanel;
 public class GraphicView extends JPanel {
 
 	private Planet[] planets;
-	private int size;
 
 	/*---------------------------------------------------
 	 * Constructor
 	 *---------------------------------------------------*/
-	public GraphicView(Planet[] planets, int size) {
+	public GraphicView(Planet[] planets) {
 		this.planets = planets;
-		this.size = size;
-		//this.setBackground(Color.BLUE);
+		this.setBackground(Color.BLACK);
 		repaint();
 	}
 
@@ -46,10 +44,9 @@ public class GraphicView extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
-		setBackground(Color.BLACK);
 		for (Planet planet : planets) {
 			g2.setColor(planet.color);
-			g2.fillOval((int)planet.p.getX(), (int)planet.p.getY(), size, size);
+			g2.fillOval((int)planet.p.getX(), (int)planet.p.getY(), planet.radius, planet.radius);
 		}
 	}
 	
