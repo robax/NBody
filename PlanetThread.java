@@ -1,34 +1,37 @@
-public class PlanetThread implements Runnable{
-	Thread runner;
-	int me;
-	Barrier barrier;
+/*---------------------------------------------------
+ * Tanner Bernth
+ * Robert Walters
+ * PlanetThread.java
+ *---------------------------------------------------
+ * Basic thread in charge of some portion of the planets
+ *---------------------------------------------------*/
+
+public class PlanetThread extends Thread{
 	
-	public final static double G = 0.0000000000667;
-	public static Point[] p, v, f;
-	public static double[] m;
-	public static int n, dt, numThreads, numSteps;
-	private int iteration = 0;
-	public static GUI gui;
+	private int me;
+	private Barrier barrier;
+	private final static double G = 0.0000000000667;
+	private static Point[] p, v, f;
+	private static double[] m;
+	private static int n, dt, numSteps;
+	private static int chunkStart, chunkEnd;
 	
-	// inclusive
-	private static int chunkStart;
-	// exclusive
-	private static int chunkEnd;
-	
+	/*---------------------------------------------------
+	 * PlanetThread()
+	 *---------------------------------------------------
+	 * Thread constructor
+	 *---------------------------------------------------*/
 	@SuppressWarnings("static-access")
 	public PlanetThread(int numThreads, int me, Barrier barrier, Point[] p, Point[] v, 
-						Point[] f, double[] m, int n, int dt, GUI gui, int numSteps){
-		runner = new Thread(this);
+						Point[] f, double[] m, int n, int dt, int numSteps){
 		this.me = me;
 		this.barrier = barrier;
 		this.p = p;
 		this.v = v;
-		this.f= f;
+		this.f = f;
 		this.m = m;
-		this.n= n;
+		this.n = n;
 		this.dt = dt;
-		this.gui = gui;
-		this.numThreads = numThreads;
 		this.numSteps = numSteps;
 		
 		int chunkSize = p.length / numThreads;
@@ -36,44 +39,42 @@ public class PlanetThread implements Runnable{
 		chunkEnd = chunkSize * (me+1);
 		
 		// Pretty sure this check is necessary to avoid off-by-remainder errors
+		// Note we ignore the last element for some reason. Per book pseudocode.
 		if(me==numThreads-1){
-			chunkEnd = p.length;
+			chunkEnd = n-1;
 		}
+		
+		// Because we start at 1 for some reason?
+		if(me==0){
+			chunkStart = 1;
+		}
+		System.out.println("Thread " + me + " assigned chunk " + chunkStart + "-" + chunkEnd);
 	}
 
-	@Override
+	/*---------------------------------------------------
+	 * void run()
+	 *---------------------------------------------------
+	 * Function that each thread runs
+	 *---------------------------------------------------*/
 	public void run() {
 		for (int time = 0; time < numSteps*dt; time++) {
-			System.out.println("Thread " + me + " on iteration " + iteration);
+			System.out.println("Thread " + me + " at time " + time);
 			calculateForces();
 			barrier.sync(me);
 			moveBodies();
 			barrier.sync(me);
-			iteration++;
 		}
 	}
 
-	public void start(){
-		runner.start();
-	}
-	
-	public void join(){
-		try {
-			runner.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	/*---------------------------------------------------
 	 * void calculateForces()
 	 *---------------------------------------------------
 	 * Calculates total force for every pair of bodies.
 	 *---------------------------------------------------*/
-	public static void calculateForces() {
+	private static void calculateForces() {
 		double distance, magnitude;
 		Point direction;
-		for (int i = 1; i < n-1; i++) {
+		for (int i = chunkStart; i < chunkEnd; i++) {
 			for (int j = i+1; j < n; j++) {
 				distance = Math.sqrt(Math.pow(p[i].getX()-p[j].getX(),2) +
 									 Math.pow(p[i].getY()-p[j].getY(),2));
@@ -92,10 +93,14 @@ public class PlanetThread implements Runnable{
 	 *---------------------------------------------------
 	 * Calculate new velocity and position for each body.
 	 *---------------------------------------------------*/
-	public static void moveBodies() {
+	private static void moveBodies() {
 		Point deltav, // dv = f/m * DT
 			  deltap; // dp = (v + dv/2) * DT
-		for (int i = 1; i < n; i++) {
+		
+		// This function isnt parallelized yet.
+		// The loop should look like this but it doesnt work:
+		for (int i = chunkStart; i < chunkEnd; i++) {
+		//for (int i = 0; i < n; i++) {
 			deltav = new Point(f[i].getX()/m[i]*dt,f[i].getY()/m[i]*dt);
 			deltap = new Point((v[i].getX()+deltav.getX()/2)*dt,
 							   (v[i].getY()+deltav.getY()/2)*dt);
@@ -113,7 +118,8 @@ public class PlanetThread implements Runnable{
 	 * Prints the provided error message and exits the 
 	 * program with an error code of 1.
 	 *---------------------------------------------------*/
-	public static void error (String message) {
+	@SuppressWarnings("unused")
+	private static void error (String message) {
 		System.err.println("Error: " + message);
 		System.exit(1);
 	}

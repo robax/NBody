@@ -1,30 +1,44 @@
-// Robert Walters
-// CSC 422
-// Program 2
+/*---------------------------------------------------
+ * Tanner Bernth
+ * Robert Walters
+ * Barrier.java
+ *---------------------------------------------------
+ * Parallel version of the n-body problem.
+ *---------------------------------------------------*/
 
 import java.util.concurrent.Semaphore;
 
 public class Barrier {
+	
 	int count = 0;
 	int numProc;
 	Semaphore mutex;
 	Semaphore[] barrier;
 
+	/*---------------------------------------------------
+	 * Barrier()
+	 *---------------------------------------------------
+	 * Barrier constructor
+	 *---------------------------------------------------*/
 	public Barrier(int numProc){
 		this.numProc = numProc;
 		barrier = initSemaphores(0);
 		mutex = new Semaphore(1);
 	}
 	
-	// This is the barrier method
-	// My implementation is NOT *exactly* correct, as each process is essentially
-	// assigned a partner that it wakes up each time, which is the process in 
-	// front of it. So there's only one "stage", but it works wonderfully!
-	// And it's simple!
-	
-	// The count variable could also be replaced by a synchronized int,
-	// which would also allow for the removal of the mutex. But if it ain't
-	// broke...
+	/*---------------------------------------------------
+	 * void sync(int me)
+	 *---------------------------------------------------
+	 * Basic barrier.
+	 *
+	 * My implementation is NOT *exactly* correct, as each process is essentially
+	 * assigned a partner that it wakes up each time, which is the process in 
+	 * front of it. So there's only one "stage", repeated.
+	 *
+	 * Possible improvements:
+	 * - AtomicInteger for count, remove mutex
+	 * - Implement stages
+	 *---------------------------------------------------*/
 	public void sync(int me){
 		// this flag ensures we only wake up a single thread each iteration
 		boolean flag = false;
@@ -36,16 +50,10 @@ public class Barrier {
 			e.printStackTrace();
 		}
 		count++;
-		mutex.release();
 		
 		// the last thread to reach the barrier will wake up the next process,
 		// which begins the cascade that permits all the processes to move
 		// beyond the barrier
-		try {
-			mutex.acquire();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		if(count==numProc){
 			barrier[(me+1)%numProc].release();
 			count = 0;
@@ -58,12 +66,17 @@ public class Barrier {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		if(!flag)
+		if(!flag){
 			barrier[(me+1)%numProc].release();
+		}
 	}
 	
-	// Just an array of semaphores, where num is the number of permits
-	// per semaphore
+	/*---------------------------------------------------
+	 * Semaphore[] initSemaphores(int num)
+	 *---------------------------------------------------
+	 * Creates an array of semaphores numProc long, with
+	 * starting value num 
+	 *---------------------------------------------------*/
 	private Semaphore[] initSemaphores(int num) {
 		Semaphore arrive[] = new Semaphore[numProc];
 		for(int i=0; i<numProc; i++){
