@@ -20,6 +20,9 @@ public class Planet {
 	public double m;
 	public Color color;
 	
+	/*---------------------------------------------------
+	 * Constructor
+	 *---------------------------------------------------*/
 	public Planet(Point p, Point v, Point f, double m){
 		this.p = p;
 		this.f = f;

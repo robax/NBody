@@ -68,14 +68,9 @@ public class NBody {
 	}
 
 	/*---------------------------------------------------
-	 * void initPFVM(int, Point[], Point[], Point[],
-	 * double])
+	 * Planet[] initPlanets(int n)
 	 *---------------------------------------------------
-	 * Initializes the position, velocity, force, and
-	 * mass arrays.
-	 * 
-	 * Change the initial conditions for different
-	 * results.
+	 * Initializes the planet array.
 	 *---------------------------------------------------*/
 	private static Planet[] initPlanets(int n) {
 		Planet[] out = new Planet[n];

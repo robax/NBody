@@ -31,15 +31,9 @@ public class PlanetThread extends Thread{
 		chunkStart = chunkSize * me;
 		chunkEnd = chunkSize * (me+1);
 		
-		// Pretty sure this check is necessary to avoid off-by-remainder errors
-		// Note we ignore the last element for some reason. Per book pseudocode.
+		// this check is necessary to avoid off-by-remainder errors
 		if(me==numThreads-1){
-			chunkEnd = numThreads-1;
-		}
-		
-		// Because we start at 1 for some reason?
-		if(me==0){
-			chunkStart = 1;
+			chunkEnd = planets.length;
 		}
 		System.out.println("Thread " + me + " assigned chunk " + chunkStart + "-" + chunkEnd);
 	}
@@ -90,8 +84,7 @@ public class PlanetThread extends Thread{
 		Point deltav, // dv = f/m * DT
 			  deltap; // dp = (v + dv/2) * DT
 		Point force = new Point(0.0,0.0);
-		// TODO: Rob: this loop is incorrect, threads are doing redundant work
-		for (int i = me; i < planets.length; i++) {
+		for (int i = chunkStart; i < chunkEnd; i++) {
 			// sum the forces on body i and reset f[*,i]
 			for (int k = 1; k < planets.length; k++) {
 				force.setX(force.getX()+planets[i].f.getX());

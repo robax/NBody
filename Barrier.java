@@ -3,7 +3,7 @@
  * Robert Walters
  * Barrier.java
  *---------------------------------------------------
- * Parallel version of the n-body problem.
+ * Barrier to synchronize the threads
  *---------------------------------------------------*/
 
 import java.util.concurrent.Semaphore;
@@ -36,8 +36,8 @@ public class Barrier {
 	 * front of it. So there's only one "stage", repeated.
 	 *
 	 * Possible improvements:
-	 * - AtomicInteger for count, remove mutex
-	 * - Implement stages
+	 * - TODO: AtomicInteger for count, remove mutex
+	 * - TODO: Implement dissemination stages
 	 *---------------------------------------------------*/
 	public void sync(int me){
 		// this flag ensures we only wake up a single thread each iteration

@@ -52,4 +52,5 @@ public class GUI extends JFrame {
 	public void update() {
 		view.updatePosition();
 	}
+	
 }

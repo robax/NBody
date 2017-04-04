@@ -52,4 +52,5 @@ public class GraphicView extends JPanel {
 			g2.fillOval((int)planet.p.getX(), (int)planet.p.getY(), size, size);
 		}
 	}
+	
 }
