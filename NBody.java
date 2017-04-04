@@ -70,7 +70,7 @@ public class NBody {
 			bar.sync(workers);
 			gui.update(p);
 			// Sleep if you want to see the current parameters more slowly
-			try {Thread.sleep(300);}catch(InterruptedException e){}
+			//try {Thread.sleep(300);}catch(InterruptedException e){}
 		}
 	
 		// join threads

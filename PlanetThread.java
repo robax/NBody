@@ -15,6 +15,7 @@ public class PlanetThread extends Thread{
 	private static double[] m;
 	private static int n, dt, numSteps;
 	private static int chunkStart, chunkEnd;
+	private static int pr;
 	
 	/*---------------------------------------------------
 	 * PlanetThread()
@@ -33,6 +34,7 @@ public class PlanetThread extends Thread{
 		this.n = n;
 		this.dt = dt;
 		this.numSteps = numSteps;
+		this.pr = numThreads;
 		
 		int chunkSize = p.length / numThreads;
 		chunkStart = chunkSize * me;
@@ -59,9 +61,9 @@ public class PlanetThread extends Thread{
 	public void run() {
 		for (int time = 0; time < numSteps*dt; time++) {
 			System.out.println("Thread " + me + " at time " + time);
-			calculateForces();
+			calculateForces(me);
 			barrier.sync(me);
-			moveBodies();
+			moveBodies(me);
 			barrier.sync(me);
 		}
 	}
@@ -71,10 +73,24 @@ public class PlanetThread extends Thread{
 	 *---------------------------------------------------
 	 * Calculates total force for every pair of bodies.
 	 *---------------------------------------------------*/
-	private static void calculateForces() {
-		double distance, magnitude;
+	private static void calculateForces(int w) {
+		/*double distance, magnitude;
 		Point direction;
 		for (int i = chunkStart; i < chunkEnd; i++) {
+			for (int j = i+1; j < n; j++) {
+				distance = Math.sqrt(Math.pow(p[i].getX()-p[j].getX(),2) +
+									 Math.pow(p[i].getY()-p[j].getY(),2));
+				magnitude = (G*m[i]*m[j]) / Math.pow(distance,2);
+				direction = new Point(p[j].getX()-p[i].getX(), p[j].getY()-p[i].getY());
+				f[i].setX(f[i].getX()+magnitude*direction.getX()/distance);
+				f[j].setX(f[j].getX()-magnitude*direction.getX()/distance);
+				f[i].setY(f[i].getY()+magnitude*direction.getY()/distance);
+				f[j].setY(f[j].getY()-magnitude*direction.getY()/distance);
+			}
+		}*/
+		double distance, magnitude;
+		Point direction;
+		for (int i = w; i < n; i++) {
 			for (int j = i+1; j < n; j++) {
 				distance = Math.sqrt(Math.pow(p[i].getX()-p[j].getX(),2) +
 									 Math.pow(p[i].getY()-p[j].getY(),2));
@@ -93,13 +109,31 @@ public class PlanetThread extends Thread{
 	 *---------------------------------------------------
 	 * Calculate new velocity and position for each body.
 	 *---------------------------------------------------*/
-	private static void moveBodies() {
+	private static void moveBodies(int w) {
 		Point deltav, // dv = f/m * DT
 			  deltap; // dp = (v + dv/2) * DT
+		Point force = new Point(0.0,0.0);
+		for (int i = w; i < n; i++) {
+			// sum the forces on body i and reset f[*,i]
+			for (int k = 1; k < pr; k++) {
+				force.setX(force.getX()+f[i].getX());
+				f[i].setX(0.0);
+				force.setY(force.getY()+f[i].getY());
+				f[i].setY(0.0);
+			}
+			deltav = new Point(force.getX()/m[i]*dt, force.getY()/m[i]*dt);
+			deltap = new Point((v[i].getX()+deltav.getX()/2)*dt,
+							   (v[i].getY()+deltav.getY()/2)*dt);
+			v[i].setX(v[i].getX()+deltav.getX());
+			v[i].setY(v[i].getY()+deltav.getY());
+			p[i].setX(p[i].getX()+deltap.getX());
+			p[i].setY(p[i].getY()+deltap.getY());
+			force.move(0.0,0.0); // reset force vector
+		}
 		
 		// This function isnt parallelized yet.
 		// The loop should look like this but it doesnt work:
-		for (int i = chunkStart; i < chunkEnd; i++) {
+		/*for (int i = chunkStart; i < chunkEnd; i++) {
 		//for (int i = 0; i < n; i++) {
 			deltav = new Point(f[i].getX()/m[i]*dt,f[i].getY()/m[i]*dt);
 			deltap = new Point((v[i].getX()+deltav.getX()/2)*dt,
@@ -109,7 +143,7 @@ public class PlanetThread extends Thread{
 			p[i].setX(p[i].getX()+deltap.getX());
 			p[i].setY(p[i].getY()+deltap.getY());
 			f[i].move(0.0,0.0); // reset force vector
-		}
+		}*/
 	}
 
 	/*---------------------------------------------------
