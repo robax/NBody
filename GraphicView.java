@@ -15,14 +15,14 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class GraphicView extends JPanel {
 
-	private Point[] p;
+	private Planet[] planets;
 	private int size;
 
 	/*---------------------------------------------------
 	 * Constructor
 	 *---------------------------------------------------*/
-	public GraphicView(Point[] p, int size) {
-		this.p = p;
+	public GraphicView(Planet[] planets, int size) {
+		this.planets = planets;
 		this.size = size;
 		//this.setBackground(Color.BLUE);
 		repaint();
@@ -34,8 +34,7 @@ public class GraphicView extends JPanel {
 	 * Sets the position array to the new position array
 	 * provided and calls the repaint method. 
 	 *---------------------------------------------------*/
-	public void updatePosition(Point[] p) {
-		this.p = p;
+	public void updatePosition() {
 		repaint();
 	}
 
@@ -48,8 +47,8 @@ public class GraphicView extends JPanel {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(Color.BLACK);
-		for (Point point : p) {
-			g2.fillOval((int)point.getX(), (int)point.getY(), size, size);
+		for (Planet planet : planets) {
+			g2.fillOval((int)planet.p.getX(), (int)planet.p.getY(), size, size);
 		}
 	}
 }

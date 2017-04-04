@@ -15,18 +15,18 @@ public class GUI extends JFrame {
 	public static final int height = 600;
 	private GraphicView view;
 	private String title;
-	private Point[] p;
+	private Planet[] planets;
 	private int size;
 
 	/*---------------------------------------------------
 	 * Constructor
 	 *---------------------------------------------------*/
-	public GUI(String title, Point[] p, int size) {
+	public GUI(String title, Planet[] planets, int size) {
 		this.title = title;
-		this.p = p;
+		this.planets = planets;
 		this.size = size;
 		initializeFrame();
-		view = new GraphicView(this.p, this.size);
+		view = new GraphicView(this.planets, this.size);
 		this.add(view);
 	}
 
@@ -49,7 +49,7 @@ public class GUI extends JFrame {
 	 * in order to update the Jpanel with the new 
 	 * positions.
 	 *---------------------------------------------------*/
-	public void update(Point[] p) {
-		view.updatePosition(p);
+	public void update() {
+		view.updatePosition();
 	}
 }

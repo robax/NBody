@@ -6,17 +6,18 @@
  * Represents a single body of the N-Body problem
  *---------------------------------------------------*/
 
-import java.awt.Point;
-
 public class Planet {
 	
-	private Point p, f, v;
-	private double m;
-	private String color;
-	private Planet[] sys;
+	public Point p, f, v;
+	public double m;
+	public String color;
 	
-	public Planet(){
-		
+	public Planet(Point p, Point v, Point f, double m){
+		this.p = p;
+		this.f = f;
+		this.v = v;
+		this.m = m;
+		// color = random color
 	}
 	
 }

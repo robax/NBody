@@ -8,69 +8,52 @@
 
 public class NBody {
 
-	// Command line arguments (except dt
-	public static int workers, n, size, numSteps, dt = 1;
-	public static Point[] p, v, f;
-	public static double[] m = new double[n];
-	public static PlanetThread[] threads;
-	public static GUI gui;
-	public static Barrier bar;
-
 	/*---------------------------------------------------
  	 * Main
  	 *---------------------------------------------------*/
 	public static void main (String[] args) {
 		
-		
 		// Parse console input
+		int numThreads, numPlanets, size, numSteps, dt = 1;
 		if (args.length < 4){
 			// default settings so i dont have to type as much
 			//error("java <# workers> <# bodies> <size body> <# time steps>");
-			workers = 10;
-			n = 100;
+			numThreads = 10;
+			numPlanets = 100;
 			size = 10;
 			numSteps = 10000;
 		}
 		else{
 			// Helpful in case you forget the input
 			System.out.println("java <# workers> <# bodies> <size body> <# time steps>");
-
-			workers = Integer.valueOf(args[0]);
-			n = Integer.valueOf(args[1]);
+			numThreads = Integer.valueOf(args[0]);
+			numPlanets = Integer.valueOf(args[1]);
 			size = Integer.valueOf(args[2]);
 			numSteps = Integer.valueOf(args[3]);
 		}
 		
 		// Initialize the bodies, threads, and gui
-		p = new Point[n];
-		v = new Point[n];
-		f = new Point[n];
-		m = new double[n];
-
-		bar = new Barrier(workers+1);
-		gui = new GUI("NBody Problem", p, size);
+		Planet[] planets = initPlanets(numPlanets);
+		Barrier bar = new Barrier(numThreads+1);
+		GUI gui = new GUI("NBody Problem", planets, size);
 		gui.setVisible(true);
-
-		initPVFM();
-		gui.update(p);
-		
-		threads = initThreads();
+		PlanetThread[] threads = initThreads(numThreads, bar, dt, numSteps, planets);
 
 		// start threads
 		for(PlanetThread thread : threads){
 			thread.start();
 		}
 		
-		// This thread is in charge of the gui, worker threads do the math
+		// This thread is in charge of the gui, while worker threads do the math
 		for (int time = 0; time < numSteps*dt; time++) {
 			System.out.println("Thread main at time " + time);
 			// wait for workers to calc forces
-			bar.sync(workers);
+			bar.sync(numThreads);
 			// wait for workers to move bodies
-			bar.sync(workers);
-			gui.update(p);
+			bar.sync(numThreads);
+			gui.update();
 			// Sleep if you want to see the current parameters more slowly
-			//try {Thread.sleep(300);}catch(InterruptedException e){}
+			try {Thread.sleep(300);}catch(InterruptedException e){}
 		}
 	
 		// join threads
@@ -94,20 +77,22 @@ public class NBody {
 	 * Change the initial conditions for different
 	 * results.
 	 *---------------------------------------------------*/
-	private static void initPVFM() {
+	private static Planet[] initPlanets(int n) {
+		Planet[] out = new Planet[n];
 		int vxneg, vyneg, fxneg, fyneg;
 		for (int i = 0; i < n; i++) {
 			vxneg = (int)(Math.random()*2);
 			vyneg = (int)(Math.random()*2);
 			fxneg = (int)(Math.random()*2);
 			fyneg = (int)(Math.random()*2);
-			p[i] = new Point((Math.random()*1200),(Math.random()*600));
-			v[i] = new Point(vxneg == 1 ? Math.random()*-10 : Math.random()*10,
-							 vyneg == 1 ? Math.random()*-10 : Math.random()*10);
-			f[i] = new Point(fxneg == 1 ? Math.random()*-10 : Math.random()*10,
-							 fyneg == 1 ? Math.random()*-10 : Math.random()*10);
-			m[i] = Math.random()*100000;
+			out[i] = new Planet(new Point((Math.random()*1200),(Math.random()*600)),
+								new Point(vxneg == 1 ? Math.random()*-10 : Math.random()*10,
+										  vyneg == 1 ? Math.random()*-10 : Math.random()*10),
+								new Point(fxneg == 1 ? Math.random()*-10 : Math.random()*10,
+										  fyneg == 1 ? Math.random()*-10 : Math.random()*10),
+								Math.random()*100000);
 		}
+		return out;
 	}
 	
 	/*---------------------------------------------------
@@ -115,10 +100,10 @@ public class NBody {
 	 *---------------------------------------------------
 	 * Creates an array of threads
 	 *---------------------------------------------------*/
-	private static PlanetThread[] initThreads(){
-		PlanetThread[] out = new PlanetThread[workers];
-		for(int i=0; i<workers; i++){
-			out[i] = new PlanetThread(workers, i, bar, p, v, f, m, n, dt, numSteps);
+	private static PlanetThread[] initThreads(int numThreads, Barrier bar, int dt, int numSteps, Planet[] planets){
+		PlanetThread[] out = new PlanetThread[numThreads];
+		for(int i=0; i<numThreads; i++){
+			out[i] = new PlanetThread(numThreads, i, bar, dt, numSteps, planets);
 		}
 		return out;
 	}
