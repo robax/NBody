@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.util.Random;
 
 /*---------------------------------------------------
  * Tanner Bernth
@@ -24,24 +23,21 @@ public class Planet {
 	/*---------------------------------------------------
 	 * Constructor
 	 *---------------------------------------------------*/
-	public Planet(Point p, Point v, Point f, double m){
-		this.p = p;
-		this.f = f;
-		this.v = v;
-		this.m = m;
-		this.color = colors[randInt(0, colors.length-1)];
-		this.radius = randInt(0, 20);
-	}
-	
-	/*---------------------------------------------------
-	 * int randInt(int min, int max)
-	 *---------------------------------------------------
-	 * Because the constructor depends on random numbers!
-	 *---------------------------------------------------*/
-	private static int randInt(int min, int max) {
-	    Random rand = new Random();
-	    int randomNum = rand.nextInt((max - min) + 1) + min;
-	    return randomNum;
+	public Planet(){
+		int vxneg, vyneg, fxneg, fyneg;
+		// TODO: Rob: all of this should be moved to the planet constructor
+		vxneg = (int)(Math.random()*2);
+		vyneg = (int)(Math.random()*2);
+		fxneg = (int)(Math.random()*2);
+		fyneg = (int)(Math.random()*2);
+		p = new Point((Math.random()*1200),(Math.random()*600));
+		v = new Point(vxneg == 1 ? Math.random()*-10 : Math.random()*10,
+					  vyneg == 1 ? Math.random()*-10 : Math.random()*10);
+		f = new Point(fxneg == 1 ? Math.random()*-10 : Math.random()*10,
+					  fyneg == 1 ? Math.random()*-10 : Math.random()*10);
+		m = Math.random()*100000;
+		this.color = colors[(int)(Math.random()*colors.length)];
+		this.radius = (int) Math.log(m);
 	}
 	
 }

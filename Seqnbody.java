@@ -37,7 +37,7 @@ public class Seqnbody {
 		}
 
 		planets = initPlanets(n);
-		GUI gui = new GUI("NBody Problem", planets, size);
+		GUI gui = new GUI("NBody Problem", planets);
 		gui.setVisible(true);
 
 		for (int time = 0; time < numSteps*dt; time++) {
@@ -61,18 +61,8 @@ public class Seqnbody {
 	 *---------------------------------------------------*/
 	public static Planet[] initPlanets(int n) {
 		Planet[] out = new Planet[n];
-		int vxneg, vyneg, fxneg, fyneg;
 		for (int i = 0; i < n; i++) {
-			vxneg = (int)(Math.random()*2);
-			vyneg = (int)(Math.random()*2);
-			fxneg = (int)(Math.random()*2);
-			fyneg = (int)(Math.random()*2);
-			out[i] = new Planet(new Point((Math.random()*1200),(Math.random()*600)),
-								new Point(vxneg == 1 ? Math.random()*-10 : Math.random()*10,
-										  vyneg == 1 ? Math.random()*-10 : Math.random()*10),
-								new Point(fxneg == 1 ? Math.random()*-10 : Math.random()*10,
-										  fyneg == 1 ? Math.random()*-10 : Math.random()*10),
-								Math.random()*100000);
+			out[i] = new Planet();
 		}
 		return out;
 	}

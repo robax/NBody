@@ -74,19 +74,8 @@ public class NBody {
 	 *---------------------------------------------------*/
 	private static Planet[] initPlanets(int n) {
 		Planet[] out = new Planet[n];
-		int vxneg, vyneg, fxneg, fyneg;
 		for (int i = 0; i < n; i++) {
-			// TODO: Rob: all of this should be moved to the planet constructor
-			vxneg = (int)(Math.random()*2);
-			vyneg = (int)(Math.random()*2);
-			fxneg = (int)(Math.random()*2);
-			fyneg = (int)(Math.random()*2);
-			out[i] = new Planet(new Point((Math.random()*1200),(Math.random()*600)),
-								new Point(vxneg == 1 ? Math.random()*-10 : Math.random()*10,
-										  vyneg == 1 ? Math.random()*-10 : Math.random()*10),
-								new Point(fxneg == 1 ? Math.random()*-10 : Math.random()*10,
-										  fyneg == 1 ? Math.random()*-10 : Math.random()*10),
-								Math.random()*100000);
+			out[i] = new Planet();
 		}
 		return out;
 	}
