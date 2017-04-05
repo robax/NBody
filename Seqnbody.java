@@ -43,6 +43,7 @@ public class Seqnbody {
 		for (int time = 0; time < numSteps*dt; time++) {
 			calculateForces();
 			moveBodies();
+			detectCollisions();
 			gui.update();
 			// Sleep if you want to see the current parameters more slowly
 			try {Thread.sleep(100);}catch(InterruptedException e){}
@@ -107,6 +108,70 @@ public class Seqnbody {
 			planets[i].p.setY(planets[i].p.getY()+deltap.getY());
 			planets[i].f.move(0.0,0.0); // reset force vector
 		}
+	}
+
+	/*---------------------------------------------------
+	 * void detectCollisions()
+	 *---------------------------------------------------
+	 * Detect collisions and let another function handle it. 
+	 *---------------------------------------------------*/
+	public static void detectCollisions(){
+		for (int i = 0; i < n-1; i++) {
+			for (int k = i+1; k < n; k++) {
+				double dx = Math.abs(planets[i].p.getX() - planets[k].p.getX());
+				double dy = Math.abs(planets[i].p.getY() - planets[k].p.getY());
+				double distance = Math.sqrt(dx*dx+dy*dy);
+				
+				if(distance < planets[i].radius + planets[k].radius){
+					System.out.println("Planets " + i + " and " + k + " collided!");
+					handleCollisions(planets[i], planets[k]);
+				}
+			}
+		}
+	}
+
+	/*---------------------------------------------------
+	 * void handleCollisions(Planet one, Planet two)
+	 *---------------------------------------------------
+	 * Calculate new velocity and position for collisions.
+	 *---------------------------------------------------*/
+	public static void handleCollisions(Planet one, Planet two){
+		double x2 = two.p.getX(),
+		 	   y2 = two.p.getY(),   
+			   x1 = one.p.getX(),
+			   y1 = one.p.getY(), 
+			   v2x = two.v.getX(),
+			   v2y = two.v.getY(),
+			   v1x = one.v.getX(),
+			   v1y = one.v.getY();
+		one.v.setX(((v2x*Math.pow(x2-x1,2))+
+				  (v2y*(x2-x1)*(y2-y1))+
+				  (v1x*Math.pow(y2-y1,2))-
+				  (v1y*(x2-x1)*(y2-y1)))/
+				  (Math.pow(x2-x1,2)+
+				   Math.pow(y2-y1,2))
+				);
+		one.v.setY(((v2x*(x2-x1)*(y2-y1))+
+				    (v2y*Math.pow(y2-y1,2))-
+				    (v1x*(y2-y1)*(x2-x1))+
+				    (v1y*Math.pow(x2-x1,2)))/
+					(Math.pow(x2-x1,2)+
+					 Math.pow(y1-y2,2))
+				);
+		two.v.setX((v1x*Math.pow(x2-x1,2)+
+				   (v1y*(x2-x1)*(y2-y1))+
+				   (v2x*Math.pow(y2-y1,2))-
+				   (v2y*(x2-x1)*(y2-y1)))/
+				   (Math.pow(x2-x1,2)+
+				   	Math.pow(y2-y1,2))
+				);
+		two.v.setY(((v1x*(x2-x1)*(y2-y1))+
+				   (v1y*Math.pow(y2-y1,2))-
+				   (v2x*(y2-y1)*(x2-x1))+
+				   (v2y*Math.pow(x2-x1,2)))/
+				   (Math.pow(x2-x1,2)+
+				   	Math.pow(y2-y1,2))
+			);
 	}
 
 	/*---------------------------------------------------

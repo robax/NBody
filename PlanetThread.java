@@ -131,7 +131,42 @@ public class PlanetThread extends Thread{
 	 * Calculate new velocity and position for collisions.
 	 *---------------------------------------------------*/
 	public void handleCollisions(Planet one, Planet two){
-		
+		double x2 = two.p.getX(),
+		 	   y2 = two.p.getY(),   
+			   x1 = one.p.getX(),
+			   y1 = one.p.getY(), 
+			   v2x = two.v.getX(),
+			   v2y = two.v.getY(),
+			   v1x = one.v.getX(),
+			   v1y = one.v.getY();
+		one.v.setX(((v2x*Math.pow(x2-x1,2))+
+				  (v2y*(x2-x1)*(y2-y1))+
+				  (v1x*Math.pow(y2-y1,2))-
+				  (v1y*(x2-x1)*(y2-y1)))/
+				  (Math.pow(x2-x1,2)+
+				   Math.pow(y2-y1,2))
+				);
+		one.v.setY(((v2x*(x2-x1)*(y2-y1))+
+				    (v2y*Math.pow(y2-y1,2))-
+				    (v1x*(y2-y1)*(x2-x1))+
+				    (v1y*Math.pow(x2-x1,2)))/
+					(Math.pow(x2-x1,2)+
+					 Math.pow(y1-y2,2))
+				);
+		two.v.setX((v1x*Math.pow(x2-x1,2)+
+				   (v1y*(x2-x1)*(y2-y1))+
+				   (v2x*Math.pow(y2-y1,2))-
+				   (v2y*(x2-x1)*(y2-y1)))/
+				   (Math.pow(x2-x1,2)+
+				   	Math.pow(y2-y1,2))
+				);
+		two.v.setY(((v1x*(x2-x1)*(y2-y1))+
+				   (v1y*Math.pow(y2-y1,2))-
+				   (v2x*(y2-y1)*(x2-x1))+
+				   (v2y*Math.pow(x2-x1,2)))/
+				   (Math.pow(x2-x1,2)+
+				   	Math.pow(y2-y1,2))
+			);
 	}
 	
 	/*---------------------------------------------------
