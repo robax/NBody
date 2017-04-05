@@ -6,8 +6,15 @@
  * Sequential version of the n-body problem.
  *---------------------------------------------------*/
 
+import java.lang.System;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public class Seqnbody {
 
+	public static int collisions;
 	public static int workers, n, size, numSteps,dt;
 	public static Planet[] planets;
 	public static final double g = Math.pow(6.67,-11);
@@ -40,13 +47,45 @@ public class Seqnbody {
 		GUI gui = new GUI("NBody Problem", planets);
 		gui.setVisible(true);
 
+		/*---------------------------------------------------
+	 	 * Start Timer
+		 *---------------------------------------------------*/
+		long start = System.nanoTime();
 		for (int time = 0; time < numSteps*dt; time++) {
 			calculateForces();
 			moveBodies();
 			detectCollisions();
 			gui.update();
 			// Sleep if you want to see the current parameters more slowly
-			try {Thread.sleep(100);}catch(InterruptedException e){}
+			//try {Thread.sleep(100);}catch(InterruptedException e){}
+		}
+		long end = System.nanoTime();
+		/*---------------------------------------------------
+	 	 * End Timer
+	 	 *---------------------------------------------------*/
+		long seconds = (end-start)/1000000000, 
+			 microseconds = ((end-start)%1000000000)/1000000;
+
+		System.out.printf("Computation time: %d seconds %d milliseconds\n",seconds,microseconds);
+		System.out.printf("Number of collisions detected %d\n",collisions);
+		try {
+			FileWriter file = new FileWriter("results.txt");
+			BufferedWriter br = new BufferedWriter(file);
+			int i = 1;
+			for (Planet planet : planets) {
+				if (i == 1) br.write("----------------------------------------------------\n");
+				br.write("Planet " + i + "\n");
+				br.write("Position: " + planet.p.toString() + "\n");
+				br.write("Velocity: " + planet.v.toString() + "\n");
+				br.write("----------------------------------------------------\n");
+				i++;
+			}
+			br.close();
+			file.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -104,8 +143,10 @@ public class Seqnbody {
 							   (planets[i].v.getY()+deltav.getY()/2)*dt);
 			planets[i].v.setX(planets[i].v.getX()+deltav.getX());
 			planets[i].v.setY(planets[i].v.getY()+deltav.getY());
+			//planets[i].v.move(planets[i].v.getX()+deltav.getX(),planets[i].v.getY()+deltav.getY());
 			planets[i].p.setX(planets[i].p.getX()+deltap.getX());
 			planets[i].p.setY(planets[i].p.getY()+deltap.getY());
+			//planets[i].p.move(planets[i].p.getX()+deltap.getX(),planets[i].p.getY()+deltap.getY());
 			planets[i].f.move(0.0,0.0); // reset force vector
 		}
 	}
@@ -123,7 +164,8 @@ public class Seqnbody {
 				double distance = Math.sqrt(dx*dx+dy*dy);
 				
 				if(distance < planets[i].radius + planets[k].radius){
-					System.out.println("Planets " + i + " and " + k + " collided!");
+					//System.out.println("Planets " + i + " and " + k + " collided!");
+					collisions++;
 					handleCollisions(planets[i], planets[k]);
 				}
 			}

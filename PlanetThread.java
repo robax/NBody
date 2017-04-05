@@ -47,6 +47,7 @@ public class PlanetThread extends Thread{
 		for (int time = 0; time < numSteps*dt; time++) {
 			//System.out.println("Thread " + me + " at time " + time);
 			detectCollisions();
+
 			barrier.sync(me);
 			calculateForces();
 			barrier.sync(me);
@@ -88,12 +89,18 @@ public class PlanetThread extends Thread{
 		Point force = new Point(0.0,0.0);
 		for (int i = chunkStart; i < chunkEnd; i++) {
 			// sum the forces on body i and reset f[*,i]
-			for (int k = i+1; k < planets.length; k++) {
+			for (int k = i+1; k < chunkEnd; k++) {
 				force.setX(force.getX()+planets[i].f.getX());
 				planets[i].f.setX(0.0);
 				force.setY(force.getY()+planets[i].f.getY());
 				planets[i].f.setY(0.0);
 			}
+			/*for (int k = i+1; k < planets.length; k++) {
+				force.setX(force.getX()+planets[i].f.getX());
+				planets[i].f.setX(0.0);
+				force.setY(force.getY()+planets[i].f.getY());
+				planets[i].f.setY(0.0);
+			}*/
 			deltav = new Point(planets[i].f.getX()/planets[i].m*dt,planets[i].f.getY()/planets[i].m*dt);
 			deltap = new Point((planets[i].v.getX()+deltav.getX()/2)*dt,
 							   (planets[i].v.getY()+deltav.getY()/2)*dt);
@@ -118,7 +125,7 @@ public class PlanetThread extends Thread{
 				double distance = Math.sqrt(dx*dx+dy*dy);
 				
 				if(distance < planets[i].radius + planets[k].radius){
-					System.out.println("Planets " + i + " and " + k + " collided!");
+					//System.out.println("Planets " + i + " and " + k + " collided!");
 					handleCollisions(planets[i], planets[k]);
 				}
 			}
