@@ -25,7 +25,6 @@ public class Planet {
 	 *---------------------------------------------------*/
 	public Planet(){
 		int vxneg, vyneg, fxneg, fyneg;
-		// TODO: Rob: all of this should be moved to the planet constructor
 		vxneg = (int)(Math.random()*2);
 		vyneg = (int)(Math.random()*2);
 		fxneg = (int)(Math.random()*2);

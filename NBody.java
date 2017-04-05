@@ -47,6 +47,8 @@ public class NBody {
 		// This thread is in charge of the gui, while worker threads do the math
 		for (int time = 0; time < numSteps*dt; time++) {
 			//System.out.println("Thread main at time " + time);
+			// wait for workers to detect collisions
+			bar.sync(numThreads);
 			// wait for workers to calc forces
 			bar.sync(numThreads);
 			// wait for workers to move bodies

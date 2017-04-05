@@ -36,7 +36,7 @@ public class Barrier {
 	 * front of it. So there's only one "stage", repeated.
 	 *
 	 * Possible improvements:
-	 * - TODO: AtomicInteger for count, remove mutex
+	 * - TODO: AtomicInteger for count, remove mutex [tried this and it broke idk -rob]
 	 * - TODO: Implement dissemination stages
 	 *---------------------------------------------------*/
 	public void sync(int me){

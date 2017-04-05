@@ -46,6 +46,8 @@ public class PlanetThread extends Thread{
 	public void run() {
 		for (int time = 0; time < numSteps*dt; time++) {
 			//System.out.println("Thread " + me + " at time " + time);
+			detectCollisions();
+			barrier.sync(me);
 			calculateForces();
 			barrier.sync(me);
 			moveBodies();
@@ -86,7 +88,7 @@ public class PlanetThread extends Thread{
 		Point force = new Point(0.0,0.0);
 		for (int i = chunkStart; i < chunkEnd; i++) {
 			// sum the forces on body i and reset f[*,i]
-			for (int k = 1; k < planets.length; k++) {
+			for (int k = i+1; k < planets.length; k++) {
 				force.setX(force.getX()+planets[i].f.getX());
 				planets[i].f.setX(0.0);
 				force.setY(force.getY()+planets[i].f.getY());
@@ -102,7 +104,36 @@ public class PlanetThread extends Thread{
 			planets[i].f.move(0.0,0.0); // reset force vector
 		}
 	}
-
+	
+	/*---------------------------------------------------
+	 * void detectCollisions()
+	 *---------------------------------------------------
+	 * Detect collisions and let another function handle it. 
+	 *---------------------------------------------------*/
+	public void detectCollisions(){
+		for (int i = chunkStart; i < chunkEnd; i++) {
+			for (int k = i+1; k < planets.length; k++) {
+				double dx = Math.abs(planets[i].p.getX() - planets[k].p.getX());
+				double dy = Math.abs(planets[i].p.getY() - planets[k].p.getY());
+				double distance = Math.sqrt(dx*dx+dy*dy);
+				
+				if(distance < planets[i].radius + planets[k].radius){
+					System.out.println("Planets " + i + " and " + k + " collided!");
+					handleCollisions(planets[i], planets[k]);
+				}
+			}
+		}
+	}
+	
+	/*---------------------------------------------------
+	 * void handleCollisions(Planet one, Planet two)
+	 *---------------------------------------------------
+	 * Calculate new velocity and position for collisions.
+	 *---------------------------------------------------*/
+	public void handleCollisions(Planet one, Planet two){
+		
+	}
+	
 	/*---------------------------------------------------
 	 * void error(String)
 	 *---------------------------------------------------
