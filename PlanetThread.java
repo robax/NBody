@@ -47,7 +47,6 @@ public class PlanetThread extends Thread{
 		for (int time = 0; time < numSteps*dt; time++) {
 			//System.out.println("Thread " + me + " at time " + time);
 			detectCollisions();
-
 			barrier.sync(me);
 			calculateForces();
 			barrier.sync(me);
@@ -89,7 +88,7 @@ public class PlanetThread extends Thread{
 		Point force = new Point(0.0,0.0);
 		for (int i = chunkStart; i < chunkEnd; i++) {
 			// sum the forces on body i and reset f[*,i]
-			for (int k = i+1; k < chunkEnd; k++) {
+			for (int k = i+1; k < planets.length; k++) {
 				force.setX(force.getX()+planets[i].f.getX());
 				planets[i].f.setX(0.0);
 				force.setY(force.getY()+planets[i].f.getY());
