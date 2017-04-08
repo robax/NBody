@@ -38,7 +38,7 @@ public class NBody {
 			numPlanets = Integer.valueOf(args[1]);
 			size = Integer.valueOf(args[2]);
 			numSteps = Integer.valueOf(args[3]);
-			if(args[4]!="y"){
+			if(args[4]=="0"){
 				graphicsOn = false;
 			}
 		}
@@ -48,7 +48,7 @@ public class NBody {
 		Barrier bar = new Barrier(numThreads+1);
 			gui = new GUI("NBody Problem", planets);
 		if(graphicsOn){
-			//gui.setVisible(true);
+			gui.setVisible(true);
 		}
 		PlanetThread[] threads = initThreads(numThreads, bar, dt, numSteps, planets);
 
