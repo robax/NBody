@@ -7,6 +7,7 @@
  *---------------------------------------------------*/
 
 import java.lang.System;
+import java.awt.HeadlessException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.FileNotFoundException;
@@ -23,7 +24,6 @@ public class NBody {
 		int numThreads, numPlanets, numSteps, dt = 1;
 		long barrierTime = 0, calcTime = 0;
 		boolean graphicsOn = true, barrierTimingsOn = false;
-		GUI gui = (GUI) new Object();
 		if (args.length < 5){
 			// default settings so i dont have to type as much
 			//error("java <# workers> <# bodies> <# time steps>");
@@ -48,9 +48,15 @@ public class NBody {
 		// Initialize the bodies, threads, and gui
 		Planet[] planets = initPlanets(numPlanets);
 		Barrier bar = new Barrier(numThreads+1);
-		if(graphicsOn){
-			gui = new GUI("NBody Problem", planets);
-			gui.setVisible(true);
+		try{
+			GUI gui = new GUI("NBody Problem", planets);
+			if(graphicsOn){
+				gui.setVisible(true);
+			}
+		}
+		catch(HeadlessException e){
+			// Oxford, Cambridge, and Lectura throw this exception when trying to construct
+			// anything that extends JPanel, so we catch the exception silently
 		}
 		PlanetThread[] threads = initThreads(numThreads, bar, dt, numSteps, planets, barrierTimingsOn);
 
