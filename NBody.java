@@ -22,7 +22,7 @@ public class NBody {
 		// Parse console input
 		int numThreads, numPlanets, size, numSteps, dt = 1;
 		long barrierTime = 0, calcTime = 0;
-		boolean graphicsOn = true, barrierTimings = false;
+		boolean graphicsOn = true, barrierTimingsOn = true;
 		GUI gui;
 		if (args.length < 5){
 			// default settings so i dont have to type as much
@@ -42,6 +42,9 @@ public class NBody {
 			if(Integer.valueOf(args[4])==0){
 				graphicsOn = false;
 			}
+			if(Integer.valueOf(args[5])==1){
+				barrierTimingsOn = true;
+			}
 		}
 		
 		// Initialize the bodies, threads, and gui
@@ -51,7 +54,7 @@ public class NBody {
 		if(graphicsOn){
 			gui.setVisible(true);
 		}
-		PlanetThread[] threads = initThreads(numThreads, bar, dt, numSteps, planets);
+		PlanetThread[] threads = initThreads(numThreads, bar, dt, numSteps, planets, barrierTimingsOn);
 
 		/*---------------------------------------------------
 	 	 * Start Timer
@@ -83,8 +86,10 @@ public class NBody {
 		int collisions = 0;
 		for(PlanetThread thread : threads){
 			collisions += thread.getCollisions();
-			barrierTime += thread.getBarTime();
-			calcTime += thread.getCalcTime();
+			if(barrierTimingsOn){
+				barrierTime += thread.getBarTime();
+				calcTime += thread.getCalcTime();
+			}
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -99,7 +104,9 @@ public class NBody {
 		long seconds = (end-start)/1000000000, 
 			 microseconds = ((end-start)%1000000000)/1000000;
 
-		System.out.println("Percentage of time spent in barrier: " + ((float)barrierTime/((float)barrierTime+(float)calcTime))*100);
+		if(barrierTimingsOn){
+			System.out.println("Percentage of time spent in barrier: " + ((float)barrierTime/((float)barrierTime+(float)calcTime))*100);
+		}
 		System.out.printf("Computation time: %d seconds %d milliseconds\n",seconds,microseconds);
 		System.out.printf("Number of collisions detected: " + collisions + "\n");
 		try {
@@ -142,10 +149,10 @@ public class NBody {
 	 *---------------------------------------------------
 	 * Creates an array of threads
 	 *---------------------------------------------------*/
-	private static PlanetThread[] initThreads(int numThreads, Barrier bar, int dt, int numSteps, Planet[] planets){
+	private static PlanetThread[] initThreads(int numThreads, Barrier bar, int dt, int numSteps, Planet[] planets, Boolean timings){
 		PlanetThread[] out = new PlanetThread[numThreads];
 		for(int i=0; i<numThreads; i++){
-			out[i] = new PlanetThread(numThreads, i, bar, dt, numSteps, planets);
+			out[i] = new PlanetThread(numThreads, i, bar, dt, numSteps, planets, timings);
 		}
 		return out;
 	}

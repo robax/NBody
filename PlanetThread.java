@@ -14,6 +14,7 @@ public class PlanetThread extends Thread{
 	private Barrier barrier;
 	private int dt, numSteps, collisions = 0;
 	private Planet[] planets;
+	private Boolean timings;
 	long barrierTime = 0, calcTime = 0;
 	
 	/*---------------------------------------------------
@@ -21,12 +22,13 @@ public class PlanetThread extends Thread{
 	 *---------------------------------------------------
 	 * Thread constructor
 	 *---------------------------------------------------*/
-	public PlanetThread(int numThreads, int me, Barrier barrier, int dt, int numSteps, Planet[] planets){
+	public PlanetThread(int numThreads, int me, Barrier barrier, int dt, int numSteps, Planet[] planets, boolean timings){
 		this.me = me;
 		this.barrier = barrier;
 		this.dt = dt;
 		this.numSteps = numSteps;
 		this.planets = planets;
+		this.timings = timings;
 		
 		int chunkSize = planets.length / numThreads;
 		chunkStart = chunkSize * me;
@@ -45,6 +47,26 @@ public class PlanetThread extends Thread{
 	 * Function that each thread runs
 	 *---------------------------------------------------*/
 	public void run() {
+		if(timings){
+			runWithTimings();
+		}
+		else{
+			runNoTimings();
+		}
+	}
+	
+	public void runNoTimings(){
+		for (int time = 0; time < numSteps*dt; time++) {
+			detectCollisions();
+			barrier.sync(me);
+			calculateForces();
+			barrier.sync(me);
+			moveBodies();
+			barrier.sync(me);
+		}
+	}
+	
+	public void runWithTimings(){
 		for (int time = 0; time < numSteps*dt; time++) {
 			//System.out.println("Thread " + me + " at time " + time);
 			long calcStart = System.currentTimeMillis();
