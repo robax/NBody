@@ -29,15 +29,7 @@ public class Barrier {
 	/*---------------------------------------------------
 	 * void sync(int me)
 	 *---------------------------------------------------
-	 * Basic barrier.
-	 *
-	 * My implementation is NOT *exactly* correct, as each process is essentially
-	 * assigned a partner that it wakes up each time, which is the process in 
-	 * front of it. So there's only one "stage", repeated.
-	 *
-	 * Possible improvements:
-	 * - TODO: AtomicInteger for count, remove mutex [tried this and it broke idk -rob]
-	 * - TODO: Implement dissemination stages
+	 * Basic dissmination barrier.
 	 *---------------------------------------------------*/
 	public void sync(int me){
 		// this flag ensures we only wake up a single thread each iteration
