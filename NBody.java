@@ -21,7 +21,8 @@ public class NBody {
 		
 		// Parse console input
 		int numThreads, numPlanets, size, numSteps, dt = 1;
-		boolean graphicsOn = true;
+		long barrierTime = 0, calcTime = 0;
+		boolean graphicsOn = true, barrierTimings = false;
 		GUI gui;
 		if (args.length < 5){
 			// default settings so i dont have to type as much
@@ -82,6 +83,8 @@ public class NBody {
 		int collisions = 0;
 		for(PlanetThread thread : threads){
 			collisions += thread.getCollisions();
+			barrierTime += thread.getBarTime();
+			calcTime += thread.getCalcTime();
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -96,6 +99,7 @@ public class NBody {
 		long seconds = (end-start)/1000000000, 
 			 microseconds = ((end-start)%1000000000)/1000000;
 
+		System.out.println("Percentage of time spent in barrier: " + ((float)barrierTime/((float)barrierTime+(float)calcTime))*100);
 		System.out.printf("Computation time: %d seconds %d milliseconds\n",seconds,microseconds);
 		System.out.printf("Number of collisions detected: " + collisions + "\n");
 		try {

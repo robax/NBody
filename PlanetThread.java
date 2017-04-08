@@ -14,6 +14,7 @@ public class PlanetThread extends Thread{
 	private Barrier barrier;
 	private int dt, numSteps, collisions = 0;
 	private Planet[] planets;
+	long barrierTime = 0, calcTime = 0;
 	
 	/*---------------------------------------------------
 	 * PlanetThread()
@@ -46,12 +47,29 @@ public class PlanetThread extends Thread{
 	public void run() {
 		for (int time = 0; time < numSteps*dt; time++) {
 			//System.out.println("Thread " + me + " at time " + time);
+			long calcStart = System.currentTimeMillis();
 			detectCollisions();
+			calcTime += System.currentTimeMillis() - calcStart;
+			
+			long barStart = System.currentTimeMillis();
 			barrier.sync(me);
+			barrierTime += System.currentTimeMillis() - barStart;
+			
+			calcStart = System.currentTimeMillis();
 			calculateForces();
+			calcTime += System.currentTimeMillis() - calcStart;
+			
+			barStart = System.currentTimeMillis();
 			barrier.sync(me);
+			barrierTime += System.currentTimeMillis() - barStart;
+			
+			calcStart = System.currentTimeMillis();
 			moveBodies();
+			calcTime += System.currentTimeMillis() - calcStart;
+			
+			barStart = System.currentTimeMillis();
 			barrier.sync(me);
+			barrierTime += System.currentTimeMillis() - barStart;
 		}
 	}
 
@@ -196,4 +214,23 @@ public class PlanetThread extends Thread{
 	public int getCollisions(){
 		return collisions;
 	}
+	
+	/*---------------------------------------------------
+	 * long getCalcTime()
+	 *---------------------------------------------------
+	 * Getter
+	 *---------------------------------------------------*/
+	public long getCalcTime(){
+		return calcTime;
+	}
+
+	/*---------------------------------------------------
+	 * int getBarriertime()
+	 *---------------------------------------------------
+	 * Getter
+	 *---------------------------------------------------*/
+	public long getBarTime(){
+		return barrierTime;
+	}
+	
 }
