@@ -48,16 +48,6 @@ public class NBody {
 		// Initialize the bodies, threads, and gui
 		Planet[] planets = initPlanets(numPlanets);
 		Barrier bar = new Barrier(numThreads+1);
-		try{
-			GUI gui = new GUI("NBody Problem", planets);
-			if(graphicsOn){
-				gui.setVisible(true);
-			}
-		}
-		catch(HeadlessException e){
-			// Oxford, Cambridge, and Lectura throw this exception when trying to construct
-			// anything that extends JPanel, so we catch the exception silently
-		}
 		PlanetThread[] threads = initThreads(numThreads, bar, dt, numSteps, planets, barrierTimingsOn);
 
 		/*---------------------------------------------------
@@ -70,20 +60,11 @@ public class NBody {
 			thread.start();
 		}
 		
-		// This thread is in charge of the gui, while worker threads do the math
-		for (int time = 0; time < numSteps*dt; time++) {
-			//System.out.println("Thread main at time " + time);
-			// wait for workers to detect collisions
-			bar.sync(numThreads);
-			// wait for workers to calc forces
-			bar.sync(numThreads);
-			// wait for workers to move bodies
-			bar.sync(numThreads);
-			if(graphicsOn){
-				gui.update();
-			}
-			// Sleep if you want to see the current parameters more slowly
-			//try {Thread.sleep(600);}catch(InterruptedException e){}
+		if(graphicsOn){
+			runWithGUI(numSteps, dt, bar, numThreads, planets);
+		}
+		else{
+			runNoGUI(numSteps, dt, bar, numThreads, planets);
 		}
 	
 		// join threads
@@ -171,6 +152,39 @@ public class NBody {
 	private static void error (String message) {
 		System.err.println("Error: " + message);
 		System.exit(1);
+	}
+	
+	private static void runWithGUI(int numSteps, int dt, Barrier bar, int numThreads, Planet[] planets){
+		GUI gui = new GUI("NBody Problem", planets);
+		gui.setVisible(true);
+		// This thread is in charge of the gui, while worker threads do the math
+		for (int time = 0; time < numSteps*dt; time++) {
+			//System.out.println("Thread main at time " + time);
+			// wait for workers to detect collisions
+			bar.sync(numThreads);
+			// wait for workers to calc forces
+			bar.sync(numThreads);
+			// wait for workers to move bodies
+			bar.sync(numThreads);
+			gui.update();
+			// Sleep if you want to see the current parameters more slowly
+			//try {Thread.sleep(600);}catch(InterruptedException e){}
+		}		
+	}
+	
+	private static void runNoGUI(int numSteps, int dt, Barrier bar, int numThreads, Planet[] planets){
+		// This thread is in charge of the gui, while worker threads do the math
+		for (int time = 0; time < numSteps*dt; time++) {
+			//System.out.println("Thread main at time " + time);
+			// wait for workers to detect collisions
+			bar.sync(numThreads);
+			// wait for workers to calc forces
+			bar.sync(numThreads);
+			// wait for workers to move bodies
+			bar.sync(numThreads);
+			// Sleep if you want to see the current parameters more slowly
+			//try {Thread.sleep(600);}catch(InterruptedException e){}
+		}	
 	}
 	
 }
