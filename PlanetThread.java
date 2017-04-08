@@ -12,7 +12,7 @@ public class PlanetThread extends Thread{
 
 	private int me, chunkStart, chunkEnd;
 	private Barrier barrier;
-	private int dt, numSteps;
+	private int dt, numSteps, collisions = 0;
 	private Planet[] planets;
 	
 	/*---------------------------------------------------
@@ -35,7 +35,7 @@ public class PlanetThread extends Thread{
 		if(me==numThreads-1){
 			chunkEnd = planets.length;
 		}
-		System.out.println("Thread " + me + " assigned chunk " + chunkStart + "-" + chunkEnd);
+		//System.out.println("Thread " + me + " assigned chunk " + chunkStart + "-" + chunkEnd);
 	}
 
 	/*---------------------------------------------------
@@ -124,6 +124,7 @@ public class PlanetThread extends Thread{
 				double distance = Math.sqrt(dx*dx+dy*dy);
 				
 				if(distance < planets[i].radius + planets[k].radius){
+					collisions++;
 					//System.out.println("Planets " + i + " and " + k + " collided!");
 					handleCollisions(planets[i], planets[k]);
 				}
@@ -186,5 +187,13 @@ public class PlanetThread extends Thread{
 		System.err.println("Error: " + message);
 		System.exit(1);
 	}
-	
+
+	/*---------------------------------------------------
+	 * int getCollisions()
+	 *---------------------------------------------------
+	 * Getter
+	 *---------------------------------------------------*/
+	public int getCollisions(){
+		return collisions;
+	}
 }

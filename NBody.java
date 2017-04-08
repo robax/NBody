@@ -21,7 +21,9 @@ public class NBody {
 		
 		// Parse console input
 		int numThreads, numPlanets, size, numSteps, dt = 1;
-		if (args.length < 4){
+		boolean graphicsOn = true;
+		GUI gui;
+		if (args.length < 5){
 			// default settings so i dont have to type as much
 			//error("java <# workers> <# bodies> <size body> <# time steps>");
 			numThreads = 10;
@@ -36,13 +38,18 @@ public class NBody {
 			numPlanets = Integer.valueOf(args[1]);
 			size = Integer.valueOf(args[2]);
 			numSteps = Integer.valueOf(args[3]);
+			if(args[4]!="y"){
+				graphicsOn = false;
+			}
 		}
 		
 		// Initialize the bodies, threads, and gui
 		Planet[] planets = initPlanets(numPlanets);
 		Barrier bar = new Barrier(numThreads+1);
-		GUI gui = new GUI("NBody Problem", planets);
-		gui.setVisible(true);
+			gui = new GUI("NBody Problem", planets);
+		if(graphicsOn){
+			//gui.setVisible(true);
+		}
 		PlanetThread[] threads = initThreads(numThreads, bar, dt, numSteps, planets);
 
 		/*---------------------------------------------------
@@ -64,13 +71,17 @@ public class NBody {
 			bar.sync(numThreads);
 			// wait for workers to move bodies
 			bar.sync(numThreads);
-			gui.update();
+			if(graphicsOn){
+				gui.update();
+			}
 			// Sleep if you want to see the current parameters more slowly
 			//try {Thread.sleep(600);}catch(InterruptedException e){}
 		}
 	
 		// join threads
+		int collisions = 0;
 		for(PlanetThread thread : threads){
+			collisions += thread.getCollisions();
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -86,7 +97,7 @@ public class NBody {
 			 microseconds = ((end-start)%1000000000)/1000000;
 
 		System.out.printf("Computation time: %d seconds %d milliseconds\n",seconds,microseconds);
-		System.out.printf("Number of collisions detected xxxx\n");
+		System.out.printf("Number of collisions detected: " + collisions + "\n");
 		try {
 			FileWriter file = new FileWriter("results.txt");
 			BufferedWriter br = new BufferedWriter(file);
