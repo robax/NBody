@@ -20,29 +20,27 @@ public class NBody {
 	public static void main (String[] args) {
 		
 		// Parse console input
-		int numThreads, numPlanets, size, numSteps, dt = 1;
+		int numThreads, numPlanets, numSteps, dt = 1;
 		long barrierTime = 0, calcTime = 0;
-		boolean graphicsOn = true, barrierTimingsOn = true;
-		GUI gui;
+		boolean graphicsOn = true, barrierTimingsOn = false;
+		GUI gui = (GUI) new Object();
 		if (args.length < 5){
 			// default settings so i dont have to type as much
-			//error("java <# workers> <# bodies> <size body> <# time steps>");
-			numThreads = 10;
+			//error("java <# workers> <# bodies> <# time steps>");
+			numThreads = 4;
 			numPlanets = 100;
-			size = 10;
 			numSteps = 10000;
 		}
 		else{
 			// Helpful in case you forget the input
-			System.out.println("java <# workers> <# bodies> <size body> <# time steps>");
+			System.out.println("java <# workers> <# bodies> <# time steps> <graphic (0 or 1)> <timings (0 or 1)>");
 			numThreads = Integer.valueOf(args[0]);
 			numPlanets = Integer.valueOf(args[1]);
-			size = Integer.valueOf(args[2]);
-			numSteps = Integer.valueOf(args[3]);
-			if(Integer.valueOf(args[4])==0){
+			numSteps = Integer.valueOf(args[2]);
+			if(Integer.valueOf(args[3])==0){
 				graphicsOn = false;
 			}
-			if(Integer.valueOf(args[5])==1){
+			if(Integer.valueOf(args[4])==1){
 				barrierTimingsOn = true;
 			}
 		}
@@ -50,8 +48,8 @@ public class NBody {
 		// Initialize the bodies, threads, and gui
 		Planet[] planets = initPlanets(numPlanets);
 		Barrier bar = new Barrier(numThreads+1);
-			gui = new GUI("NBody Problem", planets);
 		if(graphicsOn){
+			gui = new GUI("NBody Problem", planets);
 			gui.setVisible(true);
 		}
 		PlanetThread[] threads = initThreads(numThreads, bar, dt, numSteps, planets, barrierTimingsOn);
