@@ -38,7 +38,7 @@ public class NBody {
 			numPlanets = Integer.valueOf(args[1]);
 			size = Integer.valueOf(args[2]);
 			numSteps = Integer.valueOf(args[3]);
-			if(args[4]=="0"){
+			if(args[4]!="0"){
 				graphicsOn = false;
 			}
 		}
