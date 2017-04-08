@@ -14,8 +14,7 @@ import java.io.IOException;
 
 public class Seqnbody {
 
-	public static int collisions;
-	public static int workers, n, size, numSteps,dt;
+	public static int workers, n, size, numSteps, dt, collisions, displayGui;
 	public static Planet[] planets;
 	public static final double g = Math.pow(6.67,-11);
 
@@ -25,39 +24,40 @@ public class Seqnbody {
 	public static void main (String[] args) {
 		if (args.length < 4){
 			// default settings so i dont have to type as much
-			//error("java <# workers> <# bodies> <size body> <# time steps>");
+			//error("java <# workers> <# bodies> <size body> <# time steps> <use graphics>a");
 			workers = 1;
 			n = 100;
 			size = 10;
 			numSteps = 10000;
 			dt = 1;	
+			displayGui = 1;
 		}
 		else{
 			// Helpful in case you forget the input
-			System.out.println("java <# workers> <# bodies> <size body> <# time steps>");
+			//System.out.println("java <# workers> <# bodies> <size body> <# time steps> <display gui>");
 
 			workers = Integer.valueOf(args[0]);
 			n = Integer.valueOf(args[1]);
 			size = Integer.valueOf(args[2]);
 			numSteps = Integer.valueOf(args[3]);
 			dt = 1;
+			if (args.length == 5) {
+				displayGui = Integer.valueOf(args[4]);
+			} else {
+				displayGui = 1;
+			}
 		}
 
 		planets = initPlanets(n);
-		GUI gui = new GUI("NBody Problem", planets);
-		gui.setVisible(true);
 
 		/*---------------------------------------------------
 	 	 * Start Timer
 		 *---------------------------------------------------*/
 		long start = System.nanoTime();
-		for (int time = 0; time < numSteps*dt; time++) {
-			calculateForces();
-			moveBodies();
-			detectCollisions();
-			gui.update();
-			// Sleep if you want to see the current parameters more slowly
-			//try {Thread.sleep(100);}catch(InterruptedException e){}
+		if (displayGui == 1) {
+			runWithGUI(numSteps, dt, planets);
+		} else {
+			runNoGUI(numSteps, dt, planets);
 		}
 		long end = System.nanoTime();
 		/*---------------------------------------------------
@@ -86,6 +86,30 @@ public class Seqnbody {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		System.exit(0);
+	}
+
+	private static void runWithGUI(int numSteps, int dt, Planet[] planets){
+		GUI gui = new GUI("NBody Problem", planets);
+		gui.setVisible(true);
+		for (int time = 0; time < numSteps*dt; time++) {
+			calculateForces();
+			moveBodies();
+			detectCollisions();
+			gui.update();
+			// Sleep if you want to see the current parameters more slowly
+			//try {Thread.sleep(100);}catch(InterruptedException e){}
+		}		
+	}
+	
+	private static void runNoGUI(int numSteps, int dt, Planet[] planets){
+		for (int time = 0; time < numSteps*dt; time++) {
+			calculateForces();
+			moveBodies();
+			detectCollisions();
+			// Sleep if you want to see the current parameters more slowly
+			//try {Thread.sleep(100);}catch(InterruptedException e){}
 		}
 	}
 
